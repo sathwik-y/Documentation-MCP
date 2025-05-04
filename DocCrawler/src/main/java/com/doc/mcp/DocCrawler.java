@@ -43,8 +43,6 @@ public CommandLineRunner crawlerRunner(VectorStore vectorStore) {
             config.setPolitenessDelay(1000);
             config.setMaxDepthOfCrawling(2);
             config.setIncludeHttpsPages(true);
-            // config.setFollowRedirects(true);
-            // config.setResumableCrawling(true); // Enable resumable crawling
             config.setShutdownOnEmptyQueue(true);
             PageFetcher pageFetcher = new PageFetcher(config);
             RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
@@ -62,38 +60,3 @@ public CommandLineRunner crawlerRunner(VectorStore vectorStore) {
         };
     }
 }
-
-/*package com.doc.mcp;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import edu.uci.ics.crawler4j.crawler.CrawlConfig;
-import edu.uci.ics.crawler4j.crawler.CrawlController;
-import edu.uci.ics.crawler4j.fetcher.PageFetcher;
-import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
-import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
-
-@SpringBootApplication
-public class McpDocumentationApplication {
-
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(McpDocumentationApplication.class, args);
-		String crawlStorageFolder = "/tmp/springcralwer";
-        int numberOfCrawlers = 1;
-
-        CrawlConfig config = new CrawlConfig();
-        config.setCrawlStorageFolder(crawlStorageFolder);
-        config.setMaxDepthOfCrawling(1);
-		config.setMaxPagesToFetch(1);
-
-        PageFetcher pageFetcher = new PageFetcher(config);
-        RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
-        RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-
-        CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
-        controller.addSeed("https://docs.spring.io/spring-ai/reference/api/embeddings.html");
-        controller.start(SpringCrawler.class, numberOfCrawlers);
-	}
-
-} */

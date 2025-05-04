@@ -9,6 +9,7 @@ import org.springframework.ai.ollama.management.ModelManagementOptions;
 import org.springframework.ai.ollama.management.PullModelStrategy;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.mongodb.atlas.MongoDBAtlasVectorStore;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,6 +23,15 @@ import io.micrometer.observation.ObservationRegistry;
 @Configuration
 public class Config {
 
+    @Value("${spring.data.mongodb.uri}")
+    private String mongoUri;
+
+    @Value("${spring.data.mongodb.database}")
+    private String mongoDatabase;
+
+    @Value("spring.ai.ollama.embedding.options.model")
+    private String ollamaEmbeddingModel;
+
 
     @Bean
     public RestClient.Builder restClientBuilder() {
@@ -30,7 +40,7 @@ public class Config {
 
     @Bean
     public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(MongoClients.create(""), "spring");
+        return new MongoTemplate(MongoClients.create(mongoUri), mongoDatabase);
     }
 
 
@@ -42,7 +52,7 @@ public class Config {
     @Bean
     public EmbeddingModel embeddingModel(OllamaApi ollamaApi) {
         OllamaOptions options = OllamaOptions.builder()
-                .model("nomic-embed-text")
+                .model(ollamaEmbeddingModel)
                 .build();
 
         ModelManagementOptions managementOptions = ModelManagementOptions.builder()
@@ -67,33 +77,3 @@ public class Config {
 
 
 }
-    // private final String projectId = "mcp-documentation";
-    // private final String location = "asia-south1";
-
-    // @Bean
-    // public VertexAiEmbeddingConnectionDetails vertexAiEmbeddingConnectionDetails(){
-    //     return  VertexAiEmbeddingConnectionDetails.builder()
-    //             .projectId(projectId)
-    //             .location(location)
-    //             .build();
-    // }
-
-    // @Bean
-    // public EmbeddingModel embeddingModel(VertexAiEmbeddingConnectionDetails connectionDetails) throws IOException {
-    //     VertexAiTextEmbeddingOptions options = VertexAiTextEmbeddingOptions.builder()
-    //             .model(VertexAiTextEmbeddingOptions.DEFAULT_MODEL_NAME) // or "text-embedding-004"
-    //             .build();
-
-    //     return new VertexAiTextEmbeddingModel(connectionDetails, options);
-    // }
-/*
-   return MongoDBAtlasVectorStore.builder(mongoTemplate, embeddingModel)
-        .collectionName("vector_store")          
-        .vectorIndexName("default")          // Optional: defaults to "vector_index"
-        .pathName("custom_embedding")                    // Optional: defaults to "embedding"
-        .numCandidates(500)                             // Optional: defaults to 200
-        .metadataFieldsToFilter(List.of("author", "year")) // Optional: defaults to empty list
-        .initializeSchema(true)                         // Optional: defaults to false
-        .batchingStrategy(new TokenCountBatchingStrategy()) // Optional: defaults to TokenCountBatchingStrategy
-        .build();
- */
